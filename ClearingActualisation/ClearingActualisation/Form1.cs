@@ -73,7 +73,7 @@ namespace ClearingActualisation
         {
             if (baseName != string.Empty)
             {
-                string sqlQuery = "SELECT [UID_AZS],[TerminalID] FROM [" + baseName + "_hive_ks].[dbo].[tTerminals]";
+                string sqlQuery = $"SELECT [UID_AZS],[TerminalID] FROM [{baseName}_hive_ks].[dbo].[tTerminals]";
                 using (SqlConnection dBConnectionPL = new SqlConnection(ConfigurationManager.AppSettings["connectionStringPL"]))
                 {
                     dBConnectionPL.Open();
@@ -121,12 +121,12 @@ namespace ClearingActualisation
             for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
             {
                 lines = string.Empty;
-                lines += clearingDataGrid.Rows[row].Cells[0].Value.ToString() + "," + clearingDataGrid.Rows[row].Cells[1].Value.ToString();
+                lines += $"{clearingDataGrid.Rows[row].Cells[0].Value.ToString()} , {clearingDataGrid.Rows[row].Cells[1].Value.ToString()}";
                 sW.WriteLine(lines);
             }
 
             sW.Close();
-            MessageBox.Show("Прогружено " + (clearingDataGrid.RowCount - 1).ToString() + " терминалов");
+            MessageBox.Show($"Прогружено терминалов: {(clearingDataGrid.RowCount - 1).ToString()}");
         }
 
         private void AnyButton_Click(object sender, EventArgs e)
@@ -138,8 +138,7 @@ namespace ClearingActualisation
             if (dialogResult != DialogResult.OK)
                 return;
             //Парсим файл и заполняем Grid
-            OleDbConnection xlsxConn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" +
-                        openDialog.FileName + ";Extended Properties='Excel 12.0 XML;HDR=YES;';");
+            OleDbConnection xlsxConn = new OleDbConnection($"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={openDialog.FileName};Extended Properties='Excel 12.0 XML;HDR=YES;';");
             OleDbCommand xlsxSelect = new OleDbCommand("Select * From [Лист1$]", xlsxConn);
             xlsxConn.Open();
             OleDbDataAdapter xlsxAdapter = new OleDbDataAdapter(xlsxSelect);
@@ -165,8 +164,8 @@ namespace ClearingActualisation
 
                 for (int row = 0; row < dataSetDatabase.Tables[0].Rows.Count; row++)
                 {
-                    string sqlTerminalsFromPartnerQuery = "SELECT [UID_AZS] FROM [" + dataSetDatabase.Tables[0].Rows[row].ItemArray[0] + "].[dbo].[tTerminals] where [UID_AZS] in (";
-                    string sqlTerminalsFromPartnerQueryAll = "SELECT * FROM [" + dataSetDatabase.Tables[0].Rows[row].ItemArray[0] + "].[dbo].[tTerminals] where [UID_AZS] in (";
+                    string sqlTerminalsFromPartnerQuery = $"SELECT [UID_AZS] FROM [{dataSetDatabase.Tables[0].Rows[row].ItemArray[0]}].[dbo].[tTerminals] where [UID_AZS] in (";
+                    string sqlTerminalsFromPartnerQueryAll = $"SELECT * FROM [{dataSetDatabase.Tables[0].Rows[row].ItemArray[0]}].[dbo].[tTerminals] where [UID_AZS] in (";
                     for (int iter = 0; iter < data.Rows.Count; iter++)
                     {
                         if(iter > 0)
