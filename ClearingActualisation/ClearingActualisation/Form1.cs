@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Data;
 using System.IO;
-//using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.ServiceProcess;
-using System.Management;
 using System.Data.OleDb;
 
 namespace ClearingActualisation
@@ -17,28 +15,39 @@ namespace ClearingActualisation
         public Form1()
         {
             InitializeComponent();
-            //Создаем DataTable для логирования изменений
-            DataTable logTable = new DataTable();
-            DataColumn[] logColumns =
-            {
-                    new DataColumn("BaseName",typeof(String)),
-                    new DataColumn("UidAzs",typeof(String)),
-                    new DataColumn("OldTerminalId",typeof(String)),
-                    new DataColumn("NewTerminalId",typeof(String))
-            };
-            logTable.Columns.AddRange(logColumns);
-        }        
-
+        }
         private void tabPageClearing_Enter(object sender, EventArgs e)
         {
-            ServiceController[] scServices = ServiceController.GetServices();
-            //scServices.OrderBy(var tmp in scServices.Select(Ser)
-            foreach (ServiceController scTemp in scServices)
+            string sqlQuery = "SELECT * FROM sys.databases where [database_id] not in ('1','2','3','4','16','18','19','20','21','16','34') order by [name]";
+            using (SqlConnection dBConnection = new SqlConnection(ConfigurationManager.AppSettings["connectionStringPL"]))
             {
-                if (scTemp.ServiceName.Contains("ClearingServicePars_"))
-                {
-                    comboBoxPartnerClearing.Items.Add(scTemp.ServiceName.Replace("ClearingServicePars_", ""));
-                }
+                dBConnection.Open();
+                SqlDataAdapter adapter = new SqlDataAdapter(sqlQuery, dBConnection);
+                DataSet ds = new DataSet();
+                // Заполняем Dataset
+                adapter.Fill(ds);
+                // Отображаем данные
+                comboBoxPartnerClearing.DisplayMember = "name";
+                comboBoxPartnerClearing.DataSource = ds.Tables[0];
+                comboBoxPartnerClearing.Refresh();
+            }
+        }
+
+        private void comboBoxPartnerClearing_SelectedItemChanged(object sender, EventArgs e)
+        {
+            string sqlQuery = $"SELECT [UID_AZS], [TerminalID] FROM [{comboBoxPartnerClearing.Text}].[dbo].[tTerminals] order by sqlid";
+            using (SqlConnection dBConnection = new SqlConnection(ConfigurationManager.AppSettings["connectionStringPL"]))
+            {
+                dBConnection.Open();
+                SqlDataAdapter adapter = new SqlDataAdapter(sqlQuery, dBConnection);
+                DataTable ds = new DataTable();
+                // Заполняем Dataset
+                adapter.Fill(ds);
+                // Отображаем данные
+                clearingDataGrid.DataSource = ds;
+                clearingDataGrid.Refresh();
+                //comboBoxPartnerClearing.DisplayMember = "name";
+                //comboBoxPartnerClearing.DataSource = ds.Tables[0];
             }
         }
 
@@ -57,29 +66,6 @@ namespace ClearingActualisation
             //    comboBoxPartnerDB.DataSource = ds.Tables[0];
             //}
         }
-
-        private void comboBoxClearing_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SendQuery(comboBoxPartnerDB.GetItemText(comboBoxPartnerDB.SelectedItem));            
-        }
-
-        private void comboBoxPartnerDB_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //string sqlQuery = "SELECT [UID_AZS],[TerminalID] FROM [" + comboBoxPartnerDB.GetItemText(comboBoxPartnerDB.SelectedItem) + "].[dbo].[tTerminals] ";
-            ////    //"where [TerminalID] in ('283679283','215462691','305758931','285619649','285237981','285621827','285452978','215884260','215455949')";
-
-            //using (SqlConnection dBConnection = new SqlConnection(ConfigurationManager.AppSettings["connectionString"]))
-            //{
-            //    dBConnection.Open();
-            //    SqlDataAdapter adapter = new SqlDataAdapter(sqlQuery, dBConnection);
-            //    DataSet ds = new DataSet();
-            //    // Заполняем Dataset
-            //    adapter.Fill(ds);
-            //    // Отображаем данные
-            //    terminalsDataGrid.DataSource = ds.Tables[0];
-            //}
-        }
-
         private void SendQuery(string baseName)
         {
             if (baseName != string.Empty)
@@ -124,17 +110,16 @@ namespace ClearingActualisation
                 return;
             StreamWriter sW = new StreamWriter(SaveDialog.FileName);
             //Формируем хедер для файла мапинга
-            string lines = $"E100,{comboBoxPartnerClearing.GetItemText(comboBoxPartnerClearing.SelectedItem)}";
+            string lines = $"E100,{comboBoxPartnerClearing.Text.Replace("_hive_ks","")}";
             sW.WriteLine(lines);
 
             //Запись данных из dataGridView в выбраный файл
             for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
             {
                 lines = string.Empty;
-                lines += $"{clearingDataGrid.Rows[row].Cells[0].Value.ToString()} , {clearingDataGrid.Rows[row].Cells[1].Value.ToString()}";
+                lines += $"{clearingDataGrid.Rows[row].Cells[0].Value.ToString()},{clearingDataGrid.Rows[row].Cells[1].Value.ToString()}";
                 sW.WriteLine(lines);
             }
-
             sW.Close();
             MessageBox.Show($"Прогружено терминалов: {(clearingDataGrid.RowCount - 1).ToString()}");
         }
@@ -161,11 +146,9 @@ namespace ClearingActualisation
             #endregion
 
             //Открываем SQL-соединение с PL и EE
-            using (SqlConnection dBConnectionPL = new SqlConnection(ConfigurationManager.AppSettings["connectionStringPL"]), 
-                dBConnectionEE = new SqlConnection(ConfigurationManager.AppSettings["connectionStringEE"]))
+            using (SqlConnection dBConnectionPL = new SqlConnection(ConfigurationManager.AppSettings["connectionStringPL"]))
             {
                 dBConnectionPL.Open();
-                dBConnectionEE.Open();
 
                 //Получаем список партнерских баз
                 string sqlDatabaseQuery = "SELECT * FROM sys.databases where [name] like '%_hive_ks%' order by [name]";
@@ -182,6 +165,7 @@ namespace ClearingActualisation
                 //Проходим по всем полученным базам партнеров
                 for (int row = 0; row < dataSetDatabase.Tables[0].Rows.Count; row++)
                 {
+                    // TODO: переписать формирование строки, что бы не формировался лист станций для каждого партнера. 
                     #region  Получаем список терминалов прогруженных партнера из имеющихся в файле
                     string sqlTerminalsFromPartnerQuery = $"SELECT [UID_AZS] FROM [{dataSetDatabase.Tables[0].Rows[row].ItemArray[0]}].[dbo].[tTerminals] where [UID_AZS] in (";
                     string sqlTerminalsFromPartnerQueryAll = $"SELECT * FROM [{dataSetDatabase.Tables[0].Rows[row].ItemArray[0]}].[dbo].[tTerminals] where [UID_AZS] in (";
@@ -191,99 +175,55 @@ namespace ClearingActualisation
                         {
                             sqlTerminalsFromPartnerQuery += $",'{data.Rows[iter].ItemArray[0]}'";
                             sqlTerminalsFromPartnerQueryAll += $",'{data.Rows[iter].ItemArray[0]}'";
-
                         }
                         else
                         {
                             sqlTerminalsFromPartnerQuery += $"'{data.Rows[iter].ItemArray[0]}'";
                             sqlTerminalsFromPartnerQueryAll += $"'{data.Rows[iter].ItemArray[0]}'";
                         }
-                        
                     }
                     sqlTerminalsFromPartnerQuery += ")";
-                    sqlTerminalsFromPartnerQueryAll += ")";
+                    sqlTerminalsFromPartnerQueryAll += ") order by [uid_azs]";
 
                     SqlDataAdapter adapterTerminals = new SqlDataAdapter(sqlTerminalsFromPartnerQueryAll, dBConnectionPL);
                     DataSet dataSetTerminalsFromPartner = new DataSet();
                     adapterTerminals.Fill(dataSetTerminalsFromPartner);
                     #endregion
 
+                    int updateStatePL = 0;
                     int updatedTerminalsNumberPL = 0;
-                    int updatedTerminalsNumberEE = 0;
 
                     if (dataSetTerminalsFromPartner.Tables[0].Rows.Count > 0)
                     {
-                        String sqlTerminalsFromQueenQuery = $"SELECT * FROM [queen].[dbo].[tTerminals] where [DateEnd] is null and uidazs in ({sqlTerminalsFromPartnerQuery})";
+                        string sqlTerminalsFromQueenQuery = $"SELECT * FROM [queen].[dbo].[tTerminals] where [DateEnd] is null and uidazs in ({sqlTerminalsFromPartnerQuery}) order by [uidazs]";
                         adapterTerminals = new SqlDataAdapter(sqlTerminalsFromQueenQuery, dBConnectionPL);
                         DataSet dataSetTerminalsFromQueen = new DataSet();
                         adapterTerminals.Fill(dataSetTerminalsFromQueen);
 
                         for(int queenRow = 0; queenRow < dataSetTerminalsFromQueen.Tables[0].Rows.Count; queenRow++)
                         {
-                            int updateStatePL = 0;
-                            int updateStateEE = 0;
+                            updatedTerminalsNumberPL = 0;
 
                             if (dataSetTerminalsFromQueen.Tables[0].Rows[queenRow].ItemArray[2].ToString() != dataSetTerminalsFromPartner.Tables[0].Rows[queenRow].ItemArray[2].ToString())
                             {
                                 string sqlTerminalsUpdate = $"UPDATE [{dataSetDatabase.Tables[0].Rows[row].ItemArray[0]}].[dbo].[tTerminals] SET [TerminalID] = '{dataSetTerminalsFromQueen.Tables[0].Rows[queenRow].ItemArray[2]}' WHERE [TerminalID] = '{dataSetTerminalsFromPartner.Tables[0].Rows[queenRow].ItemArray[2]}' AND [DateEnd] is null";
 
                                 SqlCommand commandTerminalsUpdatePL = new SqlCommand(sqlTerminalsUpdate, dBConnectionPL);
-                                SqlCommand commandTerminalsUpdateEE = new SqlCommand(sqlTerminalsUpdate, dBConnectionEE);
+                                //SqlCommand commandTerminalsUpdateEE = new SqlCommand(sqlTerminalsUpdate, dBConnectionEE);
                                 updateStatePL = commandTerminalsUpdatePL.ExecuteNonQuery();
-                                updateStateEE = commandTerminalsUpdateEE.ExecuteNonQuery();
+                                //updateStateEE = commandTerminalsUpdateEE.ExecuteNonQuery();
                                 updatedTerminalsNumberPL += updateStatePL;
-                                updatedTerminalsNumberEE += updateStateEE;
+                                //updatedTerminalsNumberEE += updateStateEE;
                             }
-                            if(updateStatePL == 1)
-                            {
-
-                            }                                
                         }
-                        if(updatedTerminalsNumberEE > 0)
+                        if(updatedTerminalsNumberPL > 0)
                         {
-                            MessageBox.Show($"В базе {dataSetDatabase.Tables[0].Rows[row].ItemArray[0]} обновлено терминалов: {updatedTerminalsNumberEE}");
+                            richTextBoxTerminals.AppendText($"В базе {dataSetDatabase.Tables[0].Rows[row].ItemArray[0]} обновлено терминалов: {updatedTerminalsNumberPL}");
                         }                                                
                     }
                     progressBarTerminals.PerformStep();
                 }
             }            
-        }
-        private void LogIt()
-        {
-
-        }
-        void CreateLogFile(string Name, DataTable table)
-        {
-            try
-            {
-                StringBuilder fileContent = new StringBuilder();
-
-                foreach (var col in table.Columns)
-                {
-                    fileContent.Append(col.ToString() + ";");
-                }
-
-                fileContent.Replace(";", Environment.NewLine, fileContent.Length - 1, 1);
-
-                foreach (DataRow dr in table.Rows)
-                {
-                    foreach (var column in dr.ItemArray)
-                    {
-                        fileContent.Append("\"" + column.ToString() + "\";");
-                    }
-
-                    fileContent.Replace(";", Environment.NewLine, fileContent.Length - 1, 1);
-                }
-                string test = Environment.CurrentDirectory + "\\Logs\\";//Assembly.GetExecutingAssembly().Location.ToString().Substring(0, Assembly.GetExecutingAssembly().Location.Length - 4);
-                Directory.CreateDirectory(test);
-                string time = DateTime.Now.ToString("MMddyyyyHHmmss");
-
-                File.WriteAllText($"{test} {Name}{time}.csv", fileContent.ToString(), Encoding.UTF8);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка в функции CreateLogTable!\n" + ex.Message, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
     }
 }
