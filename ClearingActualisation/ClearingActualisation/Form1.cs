@@ -18,7 +18,7 @@ namespace ClearingActualisation
         }
         private void tabPageClearing_Enter(object sender, EventArgs e)
         {
-            string sqlQuery = "SELECT * FROM sys.databases where [database_id] not in ('1','2','3','4','16','18','19','20','21','16','34') order by [name]";
+            string sqlQuery = "SELECT * FROM sys.databases where [database_id] not in ('1','2','3','4','20','21','32','35','36','37','38') order by [name]";
             using (SqlConnection dBConnection = new SqlConnection(ConfigurationManager.AppSettings["connectionStringPL"]))
             {
                 dBConnection.Open();
@@ -36,10 +36,24 @@ namespace ClearingActualisation
         private void comboBoxPartnerClearing_SelectedItemChanged(object sender, EventArgs e)
         {
             string sqlQuery = $"SELECT [UID_AZS], [TerminalID] FROM [{comboBoxPartnerClearing.Text}].[dbo].[tTerminals] order by sqlid";
+            string sqlQueryForGPN = "SELECT [tTerminals].[TerminalID],[tAZS].[gmt],[tTerminals].[UID_AZS] " +
+                                    "FROM [GPN_hive_ks].[dbo].[tTerminals] " +
+                                    "left join [GPN_hive_ks].[dbo].[tAZS] " +
+                                    "on tTerminals.UID_AZS = tAZS.UIDAZS " +
+                                    "where gmt is not null " +
+                                    "order by UID_AZS";
             using (SqlConnection dBConnection = new SqlConnection(ConfigurationManager.AppSettings["connectionStringPL"]))
             {
                 dBConnection.Open();
-                SqlDataAdapter adapter = new SqlDataAdapter(sqlQuery, dBConnection);
+                SqlDataAdapter adapter = new SqlDataAdapter();
+                if (comboBoxPartnerClearing.Text == "GPN_hive_ks")
+                {
+                    adapter = new SqlDataAdapter(sqlQueryForGPN, dBConnection);
+                }
+                else
+                {
+                    adapter = new SqlDataAdapter(sqlQuery, dBConnection);
+                }
                 DataTable ds = new DataTable();
                 // Заполняем Dataset
                 adapter.Fill(ds);
@@ -113,19 +127,42 @@ namespace ClearingActualisation
             string lines = $"E100,{comboBoxPartnerClearing.Text.Replace("_hive_ks","")}";
             sW.WriteLine(lines);
 
-            //Запись данных из dataGridView в выбраный файл
-            for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
+            if (comboBoxPartnerClearing.Text == "GPN_hive_ks")
             {
-                lines = string.Empty;
-                lines += $"{clearingDataGrid.Rows[row].Cells[0].Value.ToString()},{clearingDataGrid.Rows[row].Cells[1].Value.ToString()}";
-                sW.WriteLine(lines);
+                for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
+                {
+                    lines = string.Empty;
+                    lines += $"{clearingDataGrid.Rows[row].Cells[0].Value}:{clearingDataGrid.Rows[row].Cells[1].Value},{clearingDataGrid.Rows[row].Cells[2].Value}";
+                    lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
+                        .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+                    sW.WriteLine(lines);
+                }
             }
+            else
+            {
+                for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
+                {
+                    lines = string.Empty;
+                    lines += $"{clearingDataGrid.Rows[row].Cells[0].Value},{clearingDataGrid.Rows[row].Cells[1].Value}";
+                    lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
+                        .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+                    sW.WriteLine(lines);
+                }
+            }
+            //Запись данных из dataGridView в выбраный файл
             sW.Close();
             MessageBox.Show($"Прогружено терминалов: {(clearingDataGrid.RowCount - 1).ToString()}");
         }
 
         private void AnyButton_Click(object sender, EventArgs e)
         {
+            if (progressBarTerminals.Value != 0)
+            {
+                progressBarTerminals.Value = 0;
+                terminalsDataGrid.DataSource = null;
+            }
+            
+
             #region Открытие и парсинг файла
             //Открываем файл с терминалами
             OpenFileDialog openDialog = new OpenFileDialog();
@@ -173,8 +210,11 @@ namespace ClearingActualisation
                     {
                         if (iter > 0)
                         {
-                            sqlTerminalsFromPartnerQuery += $",'{data.Rows[iter].ItemArray[0]}'";
-                            sqlTerminalsFromPartnerQueryAll += $",'{data.Rows[iter].ItemArray[0]}'";
+                            if (data.Rows[iter].ItemArray[0].ToString() != "")
+                            {
+                                sqlTerminalsFromPartnerQuery += $",'{data.Rows[iter].ItemArray[0]}'";
+                                sqlTerminalsFromPartnerQueryAll += $",'{data.Rows[iter].ItemArray[0]}'";
+                            }
                         }
                         else
                         {
@@ -195,7 +235,7 @@ namespace ClearingActualisation
 
                     if (dataSetTerminalsFromPartner.Tables[0].Rows.Count > 0)
                     {
-                        string sqlTerminalsFromQueenQuery = $"SELECT * FROM [queen].[dbo].[tTerminals] where [DateEnd] is null and uidazs in ({sqlTerminalsFromPartnerQuery}) order by [uidazs]";
+                        string sqlTerminalsFromQueenQuery = $"SELECT * FROM [queen].[dbo].[tTerminals] where [DateEnd] is null and [uidazs] in ({sqlTerminalsFromPartnerQuery}) and partner = 'e100' order by [uidazs]";
                         adapterTerminals = new SqlDataAdapter(sqlTerminalsFromQueenQuery, dBConnectionPL);
                         DataSet dataSetTerminalsFromQueen = new DataSet();
                         adapterTerminals.Fill(dataSetTerminalsFromQueen);
@@ -203,8 +243,10 @@ namespace ClearingActualisation
                         for(int queenRow = 0; queenRow < dataSetTerminalsFromQueen.Tables[0].Rows.Count; queenRow++)
                         {
                             updatedTerminalsNumberPL = 0;
+                            var queen = dataSetTerminalsFromQueen.Tables[0].Rows[queenRow].ItemArray[2].ToString();
+                            var partner = dataSetTerminalsFromPartner.Tables[0].Rows[queenRow].ItemArray[2].ToString();
 
-                            if (dataSetTerminalsFromQueen.Tables[0].Rows[queenRow].ItemArray[2].ToString() != dataSetTerminalsFromPartner.Tables[0].Rows[queenRow].ItemArray[2].ToString())
+                            if (queen != partner)
                             {
                                 string sqlTerminalsUpdate = $"UPDATE [{dataSetDatabase.Tables[0].Rows[row].ItemArray[0]}].[dbo].[tTerminals] SET [TerminalID] = '{dataSetTerminalsFromQueen.Tables[0].Rows[queenRow].ItemArray[2]}' WHERE [TerminalID] = '{dataSetTerminalsFromPartner.Tables[0].Rows[queenRow].ItemArray[2]}' AND [DateEnd] is null";
 
@@ -218,7 +260,7 @@ namespace ClearingActualisation
                         }
                         if(updatedTerminalsNumberPL > 0)
                         {
-                            richTextBoxTerminals.AppendText($"В базе {dataSetDatabase.Tables[0].Rows[row].ItemArray[0]} обновлено терминалов: {updatedTerminalsNumberPL}");
+                            richTextBoxTerminals.AppendText($"В базе {dataSetDatabase.Tables[0].Rows[row].ItemArray[0]} обновлено терминалов: {updatedTerminalsNumberPL}\n");
                         }                                                
                     }
                     progressBarTerminals.PerformStep();

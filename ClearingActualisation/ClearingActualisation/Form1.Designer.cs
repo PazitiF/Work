@@ -37,19 +37,19 @@ namespace ClearingActualisation
             this.ManualSaveButton = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageTerminals = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.richTextBoxTerminals = new System.Windows.Forms.RichTextBox();
             this.progressBarTerminals = new System.Windows.Forms.ProgressBar();
             this.terminalsDataGrid = new System.Windows.Forms.DataGridView();
             this.AnyButton = new System.Windows.Forms.Button();
             this.tabPageClearing = new System.Windows.Forms.TabPage();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.clearingDataGrid)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageTerminals.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.terminalsDataGrid)).BeginInit();
             this.tabPageClearing.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // clearingDataGrid
@@ -116,6 +116,24 @@ namespace ClearingActualisation
             this.tabPageTerminals.UseVisualStyleBackColor = true;
             this.tabPageTerminals.Enter += new System.EventHandler(this.tabPageTerminals_Enter);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(384, 66);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(169, 26);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Принимаются Excel-документы \r\nследующего вида:";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(381, 95);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(214, 184);
+            this.pictureBox1.TabIndex = 10;
+            this.pictureBox1.TabStop = false;
+            // 
             // richTextBoxTerminals
             // 
             this.richTextBoxTerminals.Location = new System.Drawing.Point(381, 285);
@@ -159,46 +177,31 @@ namespace ClearingActualisation
             this.tabPageClearing.Controls.Add(this.ManualSaveButton);
             this.tabPageClearing.Location = new System.Drawing.Point(4, 22);
             this.tabPageClearing.Name = "tabPageClearing";
-            this.tabPageClearing.Size = new System.Drawing.Size(593, 547);
+            this.tabPageClearing.Size = new System.Drawing.Size(603, 547);
             this.tabPageClearing.TabIndex = 2;
             this.tabPageClearing.Text = "Clearing";
             this.tabPageClearing.UseVisualStyleBackColor = true;
             this.tabPageClearing.Enter += new System.EventHandler(this.tabPageClearing_Enter);
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(381, 95);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(214, 184);
-            this.pictureBox1.TabIndex = 10;
-            this.pictureBox1.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(384, 66);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(169, 26);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Принимаются Excel-документы \r\nследующего вида:";
-            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(606, 569);
             this.Controls.Add(this.tabControl1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Form1";
-            this.Text = "Terminals and Clearing Actualisation";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.Text = "TerminalsID and Clearing Actualisation";
             ((System.ComponentModel.ISupportInitialize)(this.clearingDataGrid)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageTerminals.ResumeLayout(false);
             this.tabPageTerminals.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.terminalsDataGrid)).EndInit();
             this.tabPageClearing.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
