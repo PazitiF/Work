@@ -35,25 +35,38 @@ namespace ClearingActualisation
 
         private void comboBoxPartnerClearing_SelectedItemChanged(object sender, EventArgs e)
         {
-            string sqlQuery = $"SELECT [UID_AZS], [TerminalID] FROM [{comboBoxPartnerClearing.Text}].[dbo].[tTerminals] order by sqlid";
+            string sqlQuery = $"SELECT [UID_AZS], [TerminalID] FROM [{comboBoxPartnerClearing.Text}].[dbo].[tTerminals] ORDER BY [sqlid]";
             string sqlQueryForGPN = "SELECT [tTerminals].[TerminalID],[tAZS].[gmt],[tTerminals].[UID_AZS] " +
                                     "FROM [GPN_hive_ks].[dbo].[tTerminals] " +
-                                    "left join [GPN_hive_ks].[dbo].[tAZS] " +
-                                    "on tTerminals.UID_AZS = tAZS.UIDAZS " +
-                                    "where gmt is not null " +
-                                    "order by UID_AZS";
+                                    "LEFT JOIN [GPN_hive_ks].[dbo].[tAZS] " +
+                                    "ON tTerminals.UID_AZS = tAZS.UIDAZS " +
+                                    "WHERE [GMT] is not null " +
+                                    "ORDER BY [UID_AZS]";
+            string sqlQuerryForRosneft = "SELECT [uidazs], [terminalid] FROM [queen].[dbo].[tterminals] WHERE [uidazs] in (SELECT uid_azs FROM RosNeft_hive_ks.dbo.tTerminals) and [DateEnd] is null and [partner] = 'e100'";
             using (SqlConnection dBConnection = new SqlConnection(ConfigurationManager.AppSettings["connectionStringPL"]))
             {
                 dBConnection.Open();
                 SqlDataAdapter adapter = new SqlDataAdapter();
-                if (comboBoxPartnerClearing.Text == "GPN_hive_ks")
+                switch(comboBoxPartnerClearing.Text)
                 {
-                    adapter = new SqlDataAdapter(sqlQueryForGPN, dBConnection);
+                    case "RosNeft_hive_ks":
+                        adapter = new SqlDataAdapter(sqlQuerryForRosneft, dBConnection);
+                        break;
+                    case "GPN_hive_ks":
+                        adapter = new SqlDataAdapter(sqlQueryForGPN, dBConnection);
+                        break;
+                    default:
+                        adapter = new SqlDataAdapter(sqlQuery, dBConnection);
+                        break;
                 }
-                else
-                {
-                    adapter = new SqlDataAdapter(sqlQuery, dBConnection);
-                }
+                //if (comboBoxPartnerClearing.Text == "GPN_hive_ks")
+                //{
+                //    adapter = new SqlDataAdapter(sqlQueryForGPN, dBConnection);
+                //}
+                //else
+                //{
+                //    adapter = new SqlDataAdapter(sqlQuery, dBConnection);
+                //}
                 DataTable ds = new DataTable();
                 // Заполняем Dataset
                 adapter.Fill(ds);
