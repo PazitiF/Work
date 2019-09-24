@@ -132,6 +132,7 @@ namespace ClearingActualisation
         {
             SaveFileDialog SaveDialog = new SaveFileDialog();
             SaveDialog.Filter = "Mapping File|*.dat";
+            SaveDialog.FileName = "mappingAZS";
             var dialogResult = SaveDialog.ShowDialog();
             if (dialogResult != DialogResult.OK)
                 return;
