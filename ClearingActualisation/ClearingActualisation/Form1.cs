@@ -132,37 +132,78 @@ namespace ClearingActualisation
         {
             SaveFileDialog SaveDialog = new SaveFileDialog();
             SaveDialog.Filter = "Mapping File|*.dat";
-            SaveDialog.FileName = "mappingAZS";
+            SaveDialog.FileName = "mappingAZS.dat";
             var dialogResult = SaveDialog.ShowDialog();
             if (dialogResult != DialogResult.OK)
                 return;
             StreamWriter sW = new StreamWriter(SaveDialog.FileName);
             //Формируем хедер для файла мапинга
             string lines = $"E100,{comboBoxPartnerClearing.Text.Replace("_hive_ks","")}";
-            sW.WriteLine(lines);
+            
+            switch(comboBoxPartnerClearing.Text)
+            {
+                case "GPN_hive_ks":
+                    lines = $"GPN,E100";
+                    sW.WriteLine(lines);
+                    for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
+                    {
+                        lines = string.Empty;
+                        lines += $"{clearingDataGrid.Rows[row].Cells[0].Value}:{clearingDataGrid.Rows[row].Cells[1].Value},{clearingDataGrid.Rows[row].Cells[2].Value}";
+                        lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
+                            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+                        sW.WriteLine(lines);
+                    }
+                    break;
 
-            if (comboBoxPartnerClearing.Text == "GPN_hive_ks")
-            {
-                for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
-                {
-                    lines = string.Empty;
-                    lines += $"{clearingDataGrid.Rows[row].Cells[0].Value}:{clearingDataGrid.Rows[row].Cells[1].Value},{clearingDataGrid.Rows[row].Cells[2].Value}";
-                    lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
-                        .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+                case "SBANK_hive_ks":
+                    lines = $"E100,Sberbank";
                     sW.WriteLine(lines);
-                }
-            }
-            else
-            {
-                for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
-                {
-                    lines = string.Empty;
-                    lines += $"{clearingDataGrid.Rows[row].Cells[0].Value},{clearingDataGrid.Rows[row].Cells[1].Value}";
-                    lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
-                        .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+                    for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
+                    {
+                        lines = string.Empty;
+                        lines += $"{clearingDataGrid.Rows[row].Cells[0].Value},{clearingDataGrid.Rows[row].Cells[1].Value}";
+                        lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
+                            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+                        sW.WriteLine(lines);
+                    }
+                    break;
+
+                default:
                     sW.WriteLine(lines);
-                }
+                    for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
+                    {
+                        lines = string.Empty;
+                        lines += $"{clearingDataGrid.Rows[row].Cells[0].Value},{clearingDataGrid.Rows[row].Cells[1].Value}";
+                        lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
+                            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+                        sW.WriteLine(lines);
+                    }
+                    break;
             }
+            //if (comboBoxPartnerClearing.Text == "GPN_hive_ks")
+            //{
+            //    lines = $"GPN,E100";
+            //    for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
+            //    {
+            //        lines = string.Empty;
+            //        lines += $"{clearingDataGrid.Rows[row].Cells[0].Value}:{clearingDataGrid.Rows[row].Cells[1].Value},{clearingDataGrid.Rows[row].Cells[2].Value}";
+            //        lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
+            //            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+            //        sW.WriteLine(lines);
+            //    }
+            //}
+
+            //else
+            //{
+            //    for (int row = 0; row < clearingDataGrid.RowCount - 1; row++)
+            //    {
+            //        lines = string.Empty;
+            //        lines += $"{clearingDataGrid.Rows[row].Cells[0].Value},{clearingDataGrid.Rows[row].Cells[1].Value}";
+            //        lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
+            //            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+            //        sW.WriteLine(lines);
+            //    }
+            //}
             //Запись данных из dataGridView в выбраный файл
             sW.Close();
             MessageBox.Show($"Прогружено терминалов: {(clearingDataGrid.RowCount - 1).ToString()}");
