@@ -150,7 +150,7 @@ namespace ClearingActualisation
                         lines = string.Empty;
                         lines += $"{clearingDataGrid.Rows[row].Cells[0].Value}:{clearingDataGrid.Rows[row].Cells[1].Value},{clearingDataGrid.Rows[row].Cells[2].Value}";
                         lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
-                            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+                            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "").Replace(" ","");
                         sW.WriteLine(lines);
                     }
                     break;
@@ -163,7 +163,7 @@ namespace ClearingActualisation
                         lines = string.Empty;
                         lines += $"{clearingDataGrid.Rows[row].Cells[0].Value},{clearingDataGrid.Rows[row].Cells[1].Value}";
                         lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
-                            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+                            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "").Replace(" ", "");
                         sW.WriteLine(lines);
                     }
                     break;
@@ -175,7 +175,7 @@ namespace ClearingActualisation
                         lines = string.Empty;
                         lines += $"{clearingDataGrid.Rows[row].Cells[0].Value},{clearingDataGrid.Rows[row].Cells[1].Value}";
                         lines = lines.Replace("\0", "").Replace("\a", "").Replace("\b", "").Replace("\t", "")
-                            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "");
+                            .Replace("\n", "").Replace("\v", "").Replace("\f", "").Replace("\r", "").Replace(" ", "");
                         sW.WriteLine(lines);
                     }
                     break;
