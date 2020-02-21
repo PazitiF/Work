@@ -32,22 +32,22 @@ namespace ClearingActualisation
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.clearingDataGrid = new System.Windows.Forms.DataGridView();
-            this.comboBoxPartnerClearing = new System.Windows.Forms.ComboBox();
-            this.AutoSaveButton = new System.Windows.Forms.Button();
-            this.ManualSaveButton = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.clearingPartnerComboBox = new System.Windows.Forms.ComboBox();
+            this.clearingManualSaveButton = new System.Windows.Forms.Button();
+            this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageTerminals = new System.Windows.Forms.TabPage();
-            this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.richTextBoxTerminals = new System.Windows.Forms.RichTextBox();
-            this.progressBarTerminals = new System.Windows.Forms.ProgressBar();
+            this.terminalsOpenButton = new System.Windows.Forms.Button();
+            this.terminalsLabel = new System.Windows.Forms.Label();
+            this.terminalsPictureBox = new System.Windows.Forms.PictureBox();
+            this.terminalsRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.terminalsProgressBar = new System.Windows.Forms.ProgressBar();
             this.terminalsDataGrid = new System.Windows.Forms.DataGridView();
-            this.AnyButton = new System.Windows.Forms.Button();
+            this.terminalsUpdateButton = new System.Windows.Forms.Button();
             this.tabPageClearing = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.clearingDataGrid)).BeginInit();
-            this.tabControl1.SuspendLayout();
+            this.tabControl.SuspendLayout();
             this.tabPageTerminals.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.terminalsPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.terminalsDataGrid)).BeginInit();
             this.tabPageClearing.SuspendLayout();
             this.SuspendLayout();
@@ -60,53 +60,43 @@ namespace ClearingActualisation
             this.clearingDataGrid.Size = new System.Drawing.Size(375, 547);
             this.clearingDataGrid.TabIndex = 0;
             // 
-            // comboBoxPartnerClearing
+            // clearingPartnerComboBox
             // 
-            this.comboBoxPartnerClearing.Location = new System.Drawing.Point(381, 61);
-            this.comboBoxPartnerClearing.Name = "comboBoxPartnerClearing";
-            this.comboBoxPartnerClearing.Size = new System.Drawing.Size(206, 21);
-            this.comboBoxPartnerClearing.TabIndex = 1;
-            this.comboBoxPartnerClearing.SelectionChangeCommitted += new System.EventHandler(this.comboBoxPartnerClearing_SelectedItemChanged);
+            this.clearingPartnerComboBox.Location = new System.Drawing.Point(381, 3);
+            this.clearingPartnerComboBox.Name = "clearingPartnerComboBox";
+            this.clearingPartnerComboBox.Size = new System.Drawing.Size(211, 21);
+            this.clearingPartnerComboBox.TabIndex = 1;
+            this.clearingPartnerComboBox.SelectionChangeCommitted += new System.EventHandler(this.comboBoxPartnerClearing_SelectedItemChanged);
             // 
-            // AutoSaveButton
+            // clearingManualSaveButton
             // 
-            this.AutoSaveButton.Enabled = false;
-            this.AutoSaveButton.Location = new System.Drawing.Point(381, 3);
-            this.AutoSaveButton.Name = "AutoSaveButton";
-            this.AutoSaveButton.Size = new System.Drawing.Size(206, 23);
-            this.AutoSaveButton.TabIndex = 2;
-            this.AutoSaveButton.Text = "Аўтамацiчаскi";
-            this.AutoSaveButton.UseVisualStyleBackColor = true;
-            this.AutoSaveButton.Click += new System.EventHandler(this.AutoSaveButton_Click);
+            this.clearingManualSaveButton.Location = new System.Drawing.Point(381, 30);
+            this.clearingManualSaveButton.Name = "clearingManualSaveButton";
+            this.clearingManualSaveButton.Size = new System.Drawing.Size(211, 23);
+            this.clearingManualSaveButton.TabIndex = 3;
+            this.clearingManualSaveButton.Text = "Сохранить";
+            this.clearingManualSaveButton.UseVisualStyleBackColor = true;
+            this.clearingManualSaveButton.Click += new System.EventHandler(this.ManualSaveButton_Click);
             // 
-            // ManualSaveButton
+            // tabControl
             // 
-            this.ManualSaveButton.Location = new System.Drawing.Point(381, 32);
-            this.ManualSaveButton.Name = "ManualSaveButton";
-            this.ManualSaveButton.Size = new System.Drawing.Size(206, 23);
-            this.ManualSaveButton.TabIndex = 3;
-            this.ManualSaveButton.Text = "Не аўтамацiчаскi";
-            this.ManualSaveButton.UseVisualStyleBackColor = true;
-            this.ManualSaveButton.Click += new System.EventHandler(this.ManualSaveButton_Click);
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabPageTerminals);
-            this.tabControl1.Controls.Add(this.tabPageClearing);
-            this.tabControl1.Location = new System.Drawing.Point(-2, -1);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(611, 573);
-            this.tabControl1.TabIndex = 5;
+            this.tabControl.Controls.Add(this.tabPageTerminals);
+            this.tabControl.Controls.Add(this.tabPageClearing);
+            this.tabControl.Location = new System.Drawing.Point(-2, -1);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(611, 573);
+            this.tabControl.TabIndex = 5;
             // 
             // tabPageTerminals
             // 
-            this.tabPageTerminals.Controls.Add(this.label1);
-            this.tabPageTerminals.Controls.Add(this.pictureBox1);
-            this.tabPageTerminals.Controls.Add(this.richTextBoxTerminals);
-            this.tabPageTerminals.Controls.Add(this.progressBarTerminals);
+            this.tabPageTerminals.Controls.Add(this.terminalsOpenButton);
+            this.tabPageTerminals.Controls.Add(this.terminalsLabel);
+            this.tabPageTerminals.Controls.Add(this.terminalsPictureBox);
+            this.tabPageTerminals.Controls.Add(this.terminalsRichTextBox);
+            this.tabPageTerminals.Controls.Add(this.terminalsProgressBar);
             this.tabPageTerminals.Controls.Add(this.terminalsDataGrid);
-            this.tabPageTerminals.Controls.Add(this.AnyButton);
+            this.tabPageTerminals.Controls.Add(this.terminalsUpdateButton);
             this.tabPageTerminals.Location = new System.Drawing.Point(4, 22);
             this.tabPageTerminals.Name = "tabPageTerminals";
             this.tabPageTerminals.Padding = new System.Windows.Forms.Padding(3);
@@ -116,39 +106,49 @@ namespace ClearingActualisation
             this.tabPageTerminals.UseVisualStyleBackColor = true;
             this.tabPageTerminals.Enter += new System.EventHandler(this.tabPageTerminals_Enter);
             // 
-            // label1
+            // terminalsOpenButton
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(384, 66);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(169, 26);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Принимаются Excel-документы \r\nследующего вида:";
+            this.terminalsOpenButton.Location = new System.Drawing.Point(381, 35);
+            this.terminalsOpenButton.Name = "terminalsOpenButton";
+            this.terminalsOpenButton.Size = new System.Drawing.Size(104, 23);
+            this.terminalsOpenButton.TabIndex = 12;
+            this.terminalsOpenButton.Text = "Открыть";
+            this.terminalsOpenButton.UseVisualStyleBackColor = true;
+            this.terminalsOpenButton.Click += new System.EventHandler(this.TerminalsOpenButton_Click);
             // 
-            // pictureBox1
+            // terminalsLabel
             // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(381, 95);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(214, 184);
-            this.pictureBox1.TabIndex = 10;
-            this.pictureBox1.TabStop = false;
+            this.terminalsLabel.AutoSize = true;
+            this.terminalsLabel.Location = new System.Drawing.Point(384, 66);
+            this.terminalsLabel.Name = "terminalsLabel";
+            this.terminalsLabel.Size = new System.Drawing.Size(169, 26);
+            this.terminalsLabel.TabIndex = 11;
+            this.terminalsLabel.Text = "Принимаются Excel-документы \r\nследующего вида:";
             // 
-            // richTextBoxTerminals
+            // terminalsPictureBox
             // 
-            this.richTextBoxTerminals.Location = new System.Drawing.Point(381, 285);
-            this.richTextBoxTerminals.Name = "richTextBoxTerminals";
-            this.richTextBoxTerminals.ReadOnly = true;
-            this.richTextBoxTerminals.Size = new System.Drawing.Size(214, 252);
-            this.richTextBoxTerminals.TabIndex = 9;
-            this.richTextBoxTerminals.Text = "";
+            this.terminalsPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("terminalsPictureBox.Image")));
+            this.terminalsPictureBox.Location = new System.Drawing.Point(381, 95);
+            this.terminalsPictureBox.Name = "terminalsPictureBox";
+            this.terminalsPictureBox.Size = new System.Drawing.Size(214, 184);
+            this.terminalsPictureBox.TabIndex = 10;
+            this.terminalsPictureBox.TabStop = false;
             // 
-            // progressBarTerminals
+            // terminalsRichTextBox
             // 
-            this.progressBarTerminals.Location = new System.Drawing.Point(381, 6);
-            this.progressBarTerminals.Name = "progressBarTerminals";
-            this.progressBarTerminals.Size = new System.Drawing.Size(214, 23);
-            this.progressBarTerminals.TabIndex = 8;
+            this.terminalsRichTextBox.Location = new System.Drawing.Point(381, 285);
+            this.terminalsRichTextBox.Name = "terminalsRichTextBox";
+            this.terminalsRichTextBox.ReadOnly = true;
+            this.terminalsRichTextBox.Size = new System.Drawing.Size(214, 252);
+            this.terminalsRichTextBox.TabIndex = 9;
+            this.terminalsRichTextBox.Text = "";
+            // 
+            // terminalsProgressBar
+            // 
+            this.terminalsProgressBar.Location = new System.Drawing.Point(381, 6);
+            this.terminalsProgressBar.Name = "terminalsProgressBar";
+            this.terminalsProgressBar.Size = new System.Drawing.Size(214, 23);
+            this.terminalsProgressBar.TabIndex = 8;
             // 
             // terminalsDataGrid
             // 
@@ -158,23 +158,22 @@ namespace ClearingActualisation
             this.terminalsDataGrid.Size = new System.Drawing.Size(375, 547);
             this.terminalsDataGrid.TabIndex = 6;
             // 
-            // AnyButton
+            // terminalsUpdateButton
             // 
-            this.AnyButton.Location = new System.Drawing.Point(381, 35);
-            this.AnyButton.Name = "AnyButton";
-            this.AnyButton.Size = new System.Drawing.Size(214, 23);
-            this.AnyButton.TabIndex = 5;
-            this.AnyButton.Text = "Сделать хорошо";
-            this.AnyButton.UseVisualStyleBackColor = true;
-            this.AnyButton.Click += new System.EventHandler(this.AnyButton_Click);
+            this.terminalsUpdateButton.Location = new System.Drawing.Point(491, 35);
+            this.terminalsUpdateButton.Name = "terminalsUpdateButton";
+            this.terminalsUpdateButton.Size = new System.Drawing.Size(104, 23);
+            this.terminalsUpdateButton.TabIndex = 5;
+            this.terminalsUpdateButton.Text = "Обновить";
+            this.terminalsUpdateButton.UseVisualStyleBackColor = true;
+            this.terminalsUpdateButton.Click += new System.EventHandler(this.TerminalsUpdateButton_Click);
             // 
             // tabPageClearing
             // 
             this.tabPageClearing.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.tabPageClearing.Controls.Add(this.clearingDataGrid);
-            this.tabPageClearing.Controls.Add(this.comboBoxPartnerClearing);
-            this.tabPageClearing.Controls.Add(this.AutoSaveButton);
-            this.tabPageClearing.Controls.Add(this.ManualSaveButton);
+            this.tabPageClearing.Controls.Add(this.clearingPartnerComboBox);
+            this.tabPageClearing.Controls.Add(this.clearingManualSaveButton);
             this.tabPageClearing.Location = new System.Drawing.Point(4, 22);
             this.tabPageClearing.Name = "tabPageClearing";
             this.tabPageClearing.Size = new System.Drawing.Size(603, 547);
@@ -187,7 +186,7 @@ namespace ClearingActualisation
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(606, 569);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -196,10 +195,10 @@ namespace ClearingActualisation
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "TerminalsID and Clearing Actualisation";
             ((System.ComponentModel.ISupportInitialize)(this.clearingDataGrid)).EndInit();
-            this.tabControl1.ResumeLayout(false);
+            this.tabControl.ResumeLayout(false);
             this.tabPageTerminals.ResumeLayout(false);
             this.tabPageTerminals.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.terminalsPictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.terminalsDataGrid)).EndInit();
             this.tabPageClearing.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -209,18 +208,18 @@ namespace ClearingActualisation
         #endregion
 
         private System.Windows.Forms.DataGridView clearingDataGrid;
-        private System.Windows.Forms.ComboBox comboBoxPartnerClearing;
-        private System.Windows.Forms.Button AutoSaveButton;
-        private System.Windows.Forms.Button ManualSaveButton;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.ComboBox clearingPartnerComboBox;
+        private System.Windows.Forms.Button clearingManualSaveButton;
+        private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabPageTerminals;
         private System.Windows.Forms.DataGridView terminalsDataGrid;
-        private System.Windows.Forms.Button AnyButton;
-        private System.Windows.Forms.ProgressBar progressBarTerminals;
-        private System.Windows.Forms.RichTextBox richTextBoxTerminals;
+        private System.Windows.Forms.Button terminalsUpdateButton;
+        private System.Windows.Forms.ProgressBar terminalsProgressBar;
+        private System.Windows.Forms.RichTextBox terminalsRichTextBox;
         private System.Windows.Forms.TabPage tabPageClearing;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label terminalsLabel;
+        private System.Windows.Forms.PictureBox terminalsPictureBox;
+        private System.Windows.Forms.Button terminalsOpenButton;
     }
 }
 
